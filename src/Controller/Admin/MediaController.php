@@ -49,6 +49,7 @@ class MediaController extends AbstractController
     public function add(Request $request): Response
     {
         $media = new Media();
+        $media->setUser($this->getUser());
         $form = $this->createForm(MediaType::class, $media, [
             'is_admin' => $this->isGranted('ROLE_ADMIN')
         ]);
@@ -77,10 +78,15 @@ class MediaController extends AbstractController
     public function delete(int $id): Response
     {
         $media = $this->entityManager->getRepository(Media::class)->find($id);
-
         if (!$media) {
             throw $this->createNotFoundException('Media not found');
         }
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            if ($media->getUser() !== $this->getUser()) {
+                throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer un média qui ne vous appartient pas.');
+            }
+        }
+
 
         // Supprime le fichier physique
         if (file_exists($media->getPath())) {

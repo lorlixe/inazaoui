@@ -14,7 +14,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsCommand(
     name: 'app:generate-passwords',
-    description: 'Génère des mots de passe pour tous les utilisateurs qui n\'en ont pas',
+    description: 'Génère des mots de passe pour tous les utilisateurs',
 )]
 class GeneratePasswordsCommand extends Command
 {
@@ -40,33 +40,31 @@ class GeneratePasswordsCommand extends Command
         $count = 0;
 
         foreach ($users as $user) {
-            // Ne traiter que les utilisateurs sans mot de passe ou avec mot de passe vide
-            if (!$user->getPassword() || $user->getPassword() === '') {
-                if ($defaultPassword) {
-                    // Utiliser le mot de passe par défaut
-                    $plainPassword = $defaultPassword;
-                } else {
-                    // Générer un mot de passe aléatoire
-                    $plainPassword = bin2hex(random_bytes(8)); // 16 caractères
-                }
-
-                // Hasher le mot de passe
-                $hashedPassword = $this->passwordHasher->hashPassword(
-                    $user,
-                    $plainPassword
-                );
-
-                $user->setPassword($hashedPassword);
-
-                $io->writeln(sprintf(
-                    'Utilisateur: %s (%s) - Mot de passe: %s',
-                    $user->getName(),
-                    $user->getEmail(),
-                    $plainPassword
-                ));
-
-                $count++;
+            // Traiter TOUS les utilisateurs sans exception
+            if ($defaultPassword) {
+                // Utiliser le mot de passe par défaut
+                $plainPassword = $defaultPassword;
+            } else {
+                // Générer un mot de passe aléatoire
+                $plainPassword = bin2hex(random_bytes(8)); // 16 caractères
             }
+
+            // Hasher le mot de passe
+            $hashedPassword = $this->passwordHasher->hashPassword(
+                $user,
+                $plainPassword
+            );
+
+            $user->setPassword($hashedPassword);
+
+            $io->writeln(sprintf(
+                'Utilisateur: %s (%s) - Mot de passe: %s',
+                $user->getName(),
+                $user->getEmail(),
+                $plainPassword
+            ));
+
+            $count++;
         }
 
         $this->entityManager->flush();

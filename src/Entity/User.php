@@ -42,6 +42,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $medias;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $blocked = false;
+
     public function __construct()
     {
         $this->medias = new ArrayCollection();
@@ -135,7 +138,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @return string[]
      */
     public function getRoles(): array
-    {
+    { // Si block = true, retourner ROLE_BLOCKED (qui hérite de ROLE_USER)
+        if ($this->blocked) {
+            return ['ROLE_BLOCKED'];
+        }
         // Si admin = true, retourner ROLE_ADMIN (qui hérite de ROLE_USER)
         if ($this->admin) {
             return ['ROLE_ADMIN', 'ROLE_USER'];
@@ -153,6 +159,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(?string $password): static
     {
         $this->password = $password;
+        return $this;
+    }
+
+    public function isBlocked(): bool
+    {
+        return $this->blocked;
+    }
+
+    public function setBlocked(bool $blocked): static
+    {
+        $this->blocked = $blocked;
         return $this;
     }
 

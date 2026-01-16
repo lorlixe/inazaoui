@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 // HomeController gère les pages publiques du site (front-office).
 
@@ -25,6 +26,7 @@ class HomeController extends AbstractController
     }
 
     #[Route('/guests', name: 'guests')]
+    #[IsGranted('ROLE_ADMIN')]
     public function guests(): Response
     {
         $guests = $this->entityManager->getRepository(User::class)->findBy(['admin' => false]);
@@ -35,6 +37,7 @@ class HomeController extends AbstractController
     }
 
     #[Route('/guest/{id}', name: 'guest')]
+    #[IsGranted('ROLE_ADMIN')]
     public function guest(int $id): Response
     {
         $guest = $this->entityManager->getRepository(User::class)->find($id);

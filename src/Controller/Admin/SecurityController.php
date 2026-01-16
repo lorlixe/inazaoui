@@ -14,7 +14,7 @@ class SecurityController extends AbstractController
     {
         // Si l'utilisateur est déjà connecté, rediriger vers la page d'accueil
         if ($this->getUser()) {
-            return $this->redirectToRoute('home'); // Changez 'app_home' par le nom de votre route d'accueil
+            return $this->redirectToRoute('home');
         }
 
         // Récupérer l'erreur de connexion s'il y en a une
@@ -32,7 +32,6 @@ class SecurityController extends AbstractController
     #[Route('/logout', name: 'app_logout')]
     public function logout(): void
     {
-        // Cette méthode peut être vide - elle sera interceptée par la clé logout de votre firewall
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 }
