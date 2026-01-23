@@ -91,7 +91,7 @@ jobs:
         run: php bin/phpunit tests/Unit --coverage-text --coverage-clover=coverage.xml
 
       - name: Static Analysis (PHPStan)
-        run: php vendor/bin/phpstan analyse
+        run: php vendor/bin/phpstan analyse src tests --level=6
 
       - name: Stop Docker Compose
         if: always()
