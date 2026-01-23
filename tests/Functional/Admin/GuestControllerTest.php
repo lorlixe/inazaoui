@@ -22,7 +22,9 @@ final class GuestControllerTest extends FunctionalTestCase
         $this->user->request('GET', '/admin/guest/add');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('<form', $this->user->getResponse()->getContent());
+        $content = $this->user->getResponse()->getContent();
+        self::assertNotFalse($content, 'Response content should not be false');
+        self::assertStringContainsString('<form', $content);
     }
 
     public function testAdminCanAddGuest(): void

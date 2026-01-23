@@ -61,6 +61,9 @@ class GuestController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $plainPassword = $user->getPassword();
+            if ($plainPassword === null) {
+                throw new \LogicException('Password cannot be null');
+            }
             $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
 

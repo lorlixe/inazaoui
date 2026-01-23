@@ -56,7 +56,9 @@ final class AlbumControllerTest extends FunctionalTestCase
         $this->user->request('GET', '/admin/album/update/' . $album->getId());
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('<form', $this->user->getResponse()->getContent());
+        $content = $this->user->getResponse()->getContent();
+        self::assertNotFalse($content, 'Response content should not be false');
+        self::assertStringContainsString('<form', $content);
         self::assertStringContainsString('Modifier', $this->user->getResponse()->getContent());
     }
 

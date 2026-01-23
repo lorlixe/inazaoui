@@ -100,7 +100,9 @@ final class MediaControllerTest extends FunctionalTestCase
         $this->user->request('GET', '/admin/media/add');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('<form', $this->user->getResponse()->getContent());
+        $content = $this->user->getResponse()->getContent();
+        self::assertNotFalse($content, 'Response content should not be false');
+        self::assertStringContainsString('<form', $content);
     }
 
     public function testAdminCanOpenAddMediaForm(): void
@@ -110,7 +112,9 @@ final class MediaControllerTest extends FunctionalTestCase
         $this->user->request('GET', '/admin/media/add');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('<form', $this->user->getResponse()->getContent());
+        $content = $this->user->getResponse()->getContent();
+        self::assertNotFalse($content, 'Response content should not be false');
+        self::assertStringContainsString('<form', $content);
     }
 
 
