@@ -1,4 +1,6 @@
 {
+    "name": "lorlixe/inazaoui",
+    "description": "Plateforme de photo",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",

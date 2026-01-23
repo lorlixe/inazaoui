@@ -50,14 +50,14 @@ jobs:
           echo "Waiting for MySQL to be ready..."
           for i in {1..30}; do
             if docker compose exec -T mysql mysqladmin ping -h localhost -uroot -proot --silent 2>/dev/null; then
-              echo "✅ MySQL is ready!"
+              echo " MySQL is ready!"
               break
             fi
-            echo "⏳ Attempt $i/30: MySQL not ready yet, waiting 2 seconds..."
+            echo "Attempt $i/30: MySQL not ready yet, waiting 2 seconds..."
             sleep 2
           done
           if ! docker compose exec -T mysql mysqladmin ping -h localhost -uroot -proot --silent 2>/dev/null; then
-            echo "❌ MySQL failed to start"
+            echo " MySQL failed to start"
             docker compose logs mysql
             exit 1
           fi
