@@ -1,0 +1,98 @@
+name: Continuous integration
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  ci:
+    name: Continuous Integration
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: ["8.2", "8.3"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql
+          coverage: xdebug
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Validate composer.json
+        run: composer validate
+
+      - name: Start Docker Compose
+        run: docker compose up -d
+
+      - name: Wait for MySQL to be ready
+        run: |
+          echo "Waiting for MySQL to be ready..."
+          for i in {1..30}; do
+            if docker compose exec -T mysql mysqladmin ping -h localhost -uroot -proot --silent 2>/dev/null; then
+              echo "✅ MySQL is ready!"
+              break
+            fi
+            echo "⏳ Attempt $i/30: MySQL not ready yet, waiting 2 seconds..."
+            sleep 2
+          done
+          if ! docker compose exec -T mysql mysqladmin ping -h localhost -uroot -proot --silent 2>/dev/null; then
+            echo "❌ MySQL failed to start"
+            docker compose logs mysql
+            exit 1
+          fi
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Setup test environment
+        run: |
+          if [ -f .env.test ]; then
+            cp .env.test .env.test.local
+          else
+            touch .env.test.local
+          fi
+          echo "APP_ENV=test" >> .env.test.local
+          echo "APP_DEBUG=1" >> .env.test.local
+          echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/criti-pixel_test?serverVersion=8.0" >> .env.test.local
+
+      - name: Build database and load fixtures
+        run: |
+          php bin/console doctrine:database:drop --force --if-exists --env=test
+          php bin/console doctrine:database:create --env=test
+          php bin/console doctrine:migrations:migrate --no-interaction --env=test
+          php bin/console doctrine:fixtures:load --no-interaction --env=test
+          php bin/console cache:clear --env=test
+
+      - name: Run Unit Tests
+        run: php bin/phpunit tests/Unit --testdox
+
+      - name: Run Tests with Coverage
+        run: php bin/phpunit tests/Unit --coverage-text --coverage-clover=coverage.xml
+
+      - name: Static Analysis (PHPStan)
+        run: php vendor/bin/phpstan analyse
+
+      - name: Stop Docker Compose
+        if: always()
+        run: docker compose down -v

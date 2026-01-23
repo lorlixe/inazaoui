@@ -18,8 +18,10 @@ final class LoginTest extends FunctionalTestCase
             '_password' => 'test123'
         ]);
 
-        $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
+        self::assertResponseRedirects();
+        $this->user->followRedirect();
 
+        $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
         self::assertTrue($authorizationChecker->isGranted('IS_AUTHENTICATED'));
 
         $this->get('/logout');
@@ -37,8 +39,13 @@ final class LoginTest extends FunctionalTestCase
             '_password' => 'fail'
         ]);
 
-        $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
+        self::assertResponseRedirects('/login');
 
+        $this->user->followRedirect();
+
+        self::assertResponseIsSuccessful();
+
+        $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
         self::assertFalse($authorizationChecker->isGranted('IS_AUTHENTICATED'));
     }
 }

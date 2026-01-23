@@ -28,11 +28,28 @@ class GuestController extends AbstractController
 
     #[Route('/admin/guest', name: 'admin_guest_index')]
     #[IsGranted('ROLE_ADMIN')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $guests = $this->entityManager->getRepository(User::class)->findAll();
+        $page = $request->query->getInt('page', 1);
+        $limit = 25;
 
-        return $this->render('admin/guest/index.html.twig', ['guests' => $guests]);
+        $qb = $this->entityManager->getRepository(User::class)
+            ->createQueryBuilder('u')
+            ->orderBy('u.id', 'ASC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        $guests = $qb->getQuery()->getResult();
+
+        $total = $this->entityManager->getRepository(User::class)->count([]);
+
+        return $this->render('admin/guest/index.html.twig', [
+            'guests' => $guests,
+            'total' => $total,
+            'page' => $page,
+            'limit' => $limit,
+            'pages' => ceil($total / $limit)
+        ]);
     }
     #[Route('/admin/guest/add', name: 'admin_guest_add')]
     #[IsGranted('ROLE_ADMIN')]
@@ -51,10 +68,6 @@ class GuestController extends AbstractController
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Utilisateur créé avec succès !');
-            return $this->redirectToRoute('admin_guest_index');
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
-
             return $this->redirectToRoute('admin_guest_index');
         }
 

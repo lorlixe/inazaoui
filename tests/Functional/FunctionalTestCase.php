@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
-use App\Entity\User as EntityUser;
+use App\DataFixtures\AppFixtures;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -13,30 +14,55 @@ use Symfony\Component\DomCrawler\Crawler;
 abstract class FunctionalTestCase extends WebTestCase
 {
     protected KernelBrowser $user;
+    private static bool $fixturesLoaded = false;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->user = static::createClient();
-        $this->resetDatabase();
+
+        if (!self::$fixturesLoaded) {
+            $this->loadFixtures();
+            self::$fixturesLoaded = true;
+        }
+
+        $this->cleanupTestData();
     }
 
-    private function resetDatabase(): void
+    private function loadFixtures(): void
     {
         $entityManager = $this->getEntityManager();
 
-        $entityManager->createQuery('DELETE FROM App\Entity\Media r 
-                                 WHERE r.user IN (
+        // Tout nettoyer
+        $entityManager->createQuery('DELETE FROM App\Entity\Media')->execute();
+        $entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
+        $entityManager->clear();
+
+        // Recharger les fixtures
+        $fixtures = new AppFixtures($this->service(\Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface::class));
+        $fixtures->load($entityManager);
+
+        $entityManager->flush();
+        $entityManager->clear();
+    }
+
+    private function cleanupTestData(): void
+    {
+        $entityManager = $this->getEntityManager();
+
+        // Supprimer uniquement les utilisateurs créés pendant les tests
+        $entityManager->createQuery('DELETE FROM App\Entity\Media m 
+                                 WHERE m.user IN (
                                      SELECT u FROM App\Entity\User u 
-                                     WHERE u.email = :email
+                                     WHERE u.email LIKE :pattern
                                  )')
-            ->setParameter('email', 'user+0@email.com')
+            ->setParameter('pattern', '%guest_test%')
             ->execute();
 
         $entityManager->createQuery('DELETE FROM App\Entity\User u 
-                                 WHERE u.name = :name')
-            ->setParameter('name', 'user 1')
+                                 WHERE u.email LIKE :pattern')
+            ->setParameter('pattern', '%guest_test%')
             ->execute();
 
         $entityManager->clear();
@@ -68,11 +94,26 @@ abstract class FunctionalTestCase extends WebTestCase
         return $this->user->request('GET', $uri, $parameters);
     }
 
-    protected function login(string $email = 'user+0@email.com'): void
+    protected function login(string $email = 'user1@test.com'): void
     {
-        $user = $this->getEntityManager()->getRepository(EntityUser::class)->findOneBy(['email' => $email]);
-        self::assertNotNull($user);
+        $user = $this->getEntityManager()
+            ->getRepository(User::class)
+            ->findOneBy(['email' => $email]);
+
+        self::assertNotNull($user, "User with email $email not found");
         $this->user->loginUser($user);
+    }
+
+    protected function loginAsAdmin(): User
+    {
+        $admin = $this->getEntityManager()
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@test.com']);
+
+        self::assertNotNull($admin, 'Admin not found - check your fixtures');
+        $this->user->loginUser($admin);
+
+        return $admin;
     }
 
     /**

@@ -28,7 +28,7 @@ class AppFixtures extends Fixture
 
         // Créer quelques utilisateurs de test
         $users = [];
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 30; $i++) {
             $user = new User();
             $user->setName("User Test $i");
             $user->setEmail("user$i@test.com");
