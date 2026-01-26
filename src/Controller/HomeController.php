@@ -89,7 +89,8 @@ class HomeController extends AbstractController
         // Charger tous les albums (pour le menu de navigation)
         $albums = $this->entityManager->getRepository(Album::class)->findAll();
         $album = $id ? $this->entityManager->getRepository(Album::class)->find($id) : null;
-        $user = $this->entityManager->getRepository(User::class)->findOneByAdmin(true);
+        $user = $this->entityManager->getRepository(User::class)
+            ->findOneBy(['admin' => true]);
 
         // QueryBuilder pour la pagination
         $qb = $this->entityManager->getRepository(Media::class)->createQueryBuilder('m');
