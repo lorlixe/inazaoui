@@ -1,10 +1,8 @@
-# Marine INAZAOUI - Projet 15 - OpenClassrooms
+# Ina Zaoui -
 
 ## Description
 
-Dernier projet du parcours Développeur d'application PHP/Symfony d'OpenClassrooms.
-
-CritiPixel est une plateforme de gestion de médias permettant aux photographes et créateurs de contenu de gérer leurs photos, vidéos et documents, de les organiser en albums et de partager leur portfolio en ligne.
+Ce site web appartient à une photographe spécialisée dans les photos de paysages du monde entier. Il a été mis à jour et de nouvelles fonctionnalités ont été ajoutées.
 
 ## Dépendances
 
