@@ -34,6 +34,8 @@ final class AlbumControllerTest extends FunctionalTestCase
         $crawler = $this->user->request('GET', '/admin/album/add');
         self::assertResponseIsSuccessful();
 
+
+
         $this->user->submitForm('Ajouter', [
             'album[name]' => 'Nouvel album',
         ]);
@@ -41,10 +43,16 @@ final class AlbumControllerTest extends FunctionalTestCase
         self::assertResponseRedirects('/admin/album');
         $this->user->followRedirect();
 
+        $entityManager = $this->getEntityManager();
+
         $album = $this->getEntityManager()->getRepository(Album::class)->findOneBy(['name' => 'Nouvel album']);
         self::assertNotNull($album);
 
         self::assertStringContainsString('Nouvel album', $this->user->getResponse()->getContent());
+
+        $entityManager->remove($album);
+        $entityManager->flush();
+        $entityManager->clear();
     }
     public function testAdminCanOpenUpdateAlbumForm(): void
     {

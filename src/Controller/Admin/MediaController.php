@@ -32,7 +32,7 @@ class MediaController extends AbstractController
 
         $medias = $this->entityManager->getRepository(Media::class)->findBy(
             $criteria,
-            ['id' => 'ASC'],
+            ['id' => 'DESC'],
             25,
             25 * ($page - 1)
         );
@@ -66,7 +66,7 @@ class MediaController extends AbstractController
                 $media->setUser($user);
             }
 
-            // ✅ Vérifier que le fichier existe
+            //  Vérifier que le fichier existe
             $file = $media->getFile();
             if ($file === null) {
                 throw new \LogicException('File is required');

@@ -24,7 +24,7 @@ final class MediaControllerTest extends FunctionalTestCase
 
         // Créer un média pour user1
         $media1 = new Media();
-        $media1->setTitle('Media User 1');
+        $media1->setTitle('test Media User 1');
         $media1->setPath('uploads/test_user1.jpg');
         $user1 = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => 'user1@test.com']);
         $media1->setUser($user1);
@@ -32,7 +32,7 @@ final class MediaControllerTest extends FunctionalTestCase
 
         // Créer un média pour user2
         $media2 = new Media();
-        $media2->setTitle('Media User 2');
+        $media2->setTitle('test Media User 2');
         $media2->setPath('uploads/test_user2.jpg');
         $user2 = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => 'user2@test.com']);
         $media2->setUser($user2);
@@ -46,9 +46,9 @@ final class MediaControllerTest extends FunctionalTestCase
         $content = $this->user->getResponse()->getContent();
 
         // User1 voit son média
-        self::assertStringContainsString('Media User 1', $content);
+        self::assertStringContainsString('test Media User 1', $content);
         // User1 ne voit PAS le média de User2
-        self::assertStringNotContainsString('Media User 2', $content);
+        self::assertStringNotContainsString('test Media User 2', $content);
     }
 
     public function testAdminCanSeeAllMedia(): void
@@ -192,7 +192,7 @@ final class MediaControllerTest extends FunctionalTestCase
         $user2 = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => 'user2@test.com']);
 
         $media = new Media();
-        $media->setTitle('User2 Media');
+        $media->setTitle('User2_Media');
         $media->setPath('uploads/user2_media.jpg');
         $media->setUser($user2);
         $this->getEntityManager()->persist($media);
@@ -229,34 +229,27 @@ final class MediaControllerTest extends FunctionalTestCase
 
     protected function tearDown(): void
     {
-        // Nettoyer les médias de test
         $em = $this->getEntityManager();
-        $testMedias = $em->getRepository(Media::class)->findBy([]);
+
+        // Supprimer les médias de test par leur path (tous contiennent "test" ou "delete" ou "my")
+        $testMedias = $em->getRepository(Media::class)->createQueryBuilder('m')
+            ->where('m.path LIKE :test1 OR m.path LIKE :test2 OR m.path LIKE :test3 OR m.path LIKE :test4')
+            ->setParameter('test1', '%test_user%')      // uploads/test_user1.jpg, uploads/test_user2.jpg
+            ->setParameter('test2', '%admin_test%')     // uploads/admin_test_user1.jpg
+            ->setParameter('test3', '%delete_test%')    // uploads/delete_test.jpg
+            ->setParameter('test4', '%my_media%')       // uploads/my_media.jpg, uploads/user2_media.jpg
+            ->setParameter('test4', '%User2_Media%')       // uploads/my_media.jpg, uploads/user2_media.jpg
+            ->getQuery()
+            ->getResult();
 
         foreach ($testMedias as $media) {
-            if (str_contains($media->getTitle(), 'Test Media')) {
-                // Supprimer le fichier physique
-                if (file_exists($media->getPath())) {
-                    unlink($media->getPath());
-                }
-                $em->remove($media);
+            if (file_exists($media->getPath())) {
+                @unlink($media->getPath());
             }
+            $em->remove($media);
         }
 
         $em->flush();
-
-        // Nettoyer les fichiers temporaires
-        $testFiles = [
-            'uploads/delete_test.jpg',
-            'uploads/my_media.jpg',
-            'uploads/user2_media.jpg',
-        ];
-
-        foreach ($testFiles as $file) {
-            if (file_exists($file)) {
-                unlink($file);
-            }
-        }
 
         parent::tearDown();
     }

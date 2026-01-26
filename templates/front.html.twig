@@ -20,6 +20,7 @@
 						<li class="nav-item">
 							<a class="nav-link" href="{{ path('guests') }}">Invités</a>
 						</li>
+
 						<li class="nav-item">
 							<a class="nav-link" href="{{ path('portfolio') }}">Portfolio</a>
 						</li>
@@ -32,6 +33,14 @@
 									Admin
 								</a>
 							</li>
+
+						{% else %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('admin_media_index') }}">
+									Dashboard
+								</a>
+							</li>
+
 						{% endif %}
 
 						{% if app.user %}

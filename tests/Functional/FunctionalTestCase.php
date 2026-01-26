@@ -36,6 +36,7 @@ abstract class FunctionalTestCase extends WebTestCase
 
         // Tout nettoyer
         $entityManager->createQuery('DELETE FROM App\Entity\Media')->execute();
+        $entityManager->createQuery('DELETE FROM App\Entity\Album')->execute();
         $entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
         $entityManager->clear();
 

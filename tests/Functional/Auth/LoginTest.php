@@ -15,7 +15,7 @@ final class LoginTest extends FunctionalTestCase
 
         $this->user->submitForm('Connexion', [
             "_username" => 'User Test 1',
-            '_password' => 'test123'
+            '_password' => 'user-password'
         ]);
 
         self::assertResponseRedirects();

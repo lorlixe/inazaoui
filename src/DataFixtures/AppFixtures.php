@@ -19,20 +19,20 @@ class AppFixtures extends Fixture
     {
         // Créer un admin de test
         $admin = new User();
-        $admin->setName('Admin Test');
+        $admin->setName('ina');
         $admin->setEmail('admin@test.com');
-        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'admin123'));
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'password'));
         $admin->setAdmin(true);
         $admin->setDescription('Administrateur de test');
         $manager->persist($admin);
 
         // Créer quelques utilisateurs de test
         $users = [];
-        for ($i = 1; $i <= 30; $i++) {
+        for ($i = 1; $i <= 300; $i++) {
             $user = new User();
             $user->setName("User Test $i");
             $user->setEmail("user$i@test.com");
-            $user->setPassword($this->passwordHasher->hashPassword($user, 'test123'));
+            $user->setPassword($this->passwordHasher->hashPassword($user, 'user-password'));
             $user->setAdmin(false);
             $user->setDescription("Utilisateur de test numéro $i");
             $manager->persist($user);
@@ -50,23 +50,48 @@ class AppFixtures extends Fixture
             $albums[] = $album;
         }
 
-        // Créer quelques médias de test
-        for ($i = 1; $i <= 20; $i++) {
-            $media = new Media();
-            $media->setTitle("Photo Test $i");
-            $media->setPath("uploads/test_$i.jpg");
+        // Récupérer les images existantes
+        $existingImages = glob('public/uploads/*.{jpg,jpeg,png,gif,webp}', GLOB_BRACE);
+        $imageCount = count($existingImages);
 
-            // Attribuer aléatoirement à un utilisateur
-            $media->setUser($users[array_rand($users)]);
+        if ($imageCount === 0) {
+            echo " Aucune image trouvée dans public/uploads/\n";
+        } else {
+            echo " $imageCount images trouvées\n";
 
-            // Attribuer aléatoirement à un album (50% de chance)
-            if (rand(0, 1)) {
-                $media->setAlbum($albums[array_rand($albums)]);
+            // Créer des médias avec les images existantes
+            for ($i = 0; $i < $imageCount; $i++) {
+                $media = new Media();
+
+                // Utiliser les vraies images
+                $imagePath = str_replace('public/', '', $existingImages[$i]);
+                $imageFilename = basename($imagePath);
+
+                $media->setTitle(pathinfo($imageFilename, PATHINFO_FILENAME));
+                $media->setPath($imagePath);
+
+                // Attribuer aléatoirement à un utilisateur ou à l'admin
+                if (rand(0, 1)) {
+                    $media->setUser($admin);
+                } else {
+                    $media->setUser($users[array_rand($users)]);
+                }
+
+                // Attribuer aléatoirement à un album (50% de chance)
+                if (rand(0, 1)) {
+                    $media->setAlbum($albums[array_rand($albums)]);
+                }
+
+                $manager->persist($media);
             }
-
-            $manager->persist($media);
         }
 
         $manager->flush();
+
+        echo "\n Fixtures chargées avec succès !\n";
+        echo "   - 1 admin (ina / password)\n";
+        echo "   - 300 utilisateurs (password: user-password)\n";
+        echo "   - 5 albums\n";
+        echo "   - $imageCount médias\n";
     }
 }

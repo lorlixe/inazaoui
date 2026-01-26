@@ -2,12 +2,12 @@
 <html lang="en">
  <head>
   <meta charset="UTF-8">
-  <title>Dashboard for C:\Users\marin\OneDrive\Documents\openclassrooms\Formation PHP\projet 15\876-p15-inazaoui-main\876-p15-inazaoui-main\src\Controller\Admin</title>
+  <title>Dashboard for C:\Users\marin\OneDrive\Documents\openclassrooms\Formation PHP\projet 15\876-p15-inazaoui-main\876-p15-inazaoui-main\src\Security</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="../../_css/bootstrap.min.css?v=9.2.32" rel="stylesheet" type="text/css">
-  <link href="../../_css/nv.d3.min.css?v=9.2.32" rel="stylesheet" type="text/css">
-  <link href="../../_css/style.css?v=9.2.32" rel="stylesheet" type="text/css">
-  <link href="../../_css/custom.css" rel="stylesheet" type="text/css">
+  <link href="../_css/bootstrap.min.css?v=9.2.32" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css?v=9.2.32" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=9.2.32" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
  </head>
  <body>
   <header>
@@ -16,9 +16,8 @@
      <div class="col-md-12">
       <nav aria-label="breadcrumb">
        <ol class="breadcrumb">
-         <li class="breadcrumb-item"><a href="../../index.html">C:\Users\marin\OneDrive\Documents\openclassrooms\Formation PHP\projet 15\876-p15-inazaoui-main\876-p15-inazaoui-main\src</a></li>
-         <li class="breadcrumb-item"><a href="../index.html">Controller</a></li>
-         <li class="breadcrumb-item"><a href="index.html">Admin</a></li>
+         <li class="breadcrumb-item"><a href="../index.html">C:\Users\marin\OneDrive\Documents\openclassrooms\Formation PHP\projet 15\876-p15-inazaoui-main\876-p15-inazaoui-main\src</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Security</a></li>
          <li class="breadcrumb-item active">(Dashboard)</li>
 
        </ol>
@@ -59,8 +58,7 @@
         </tr>
        </thead>
        <tbody>
-       <tr><td><a href="MediaController.php.html#15">App\Controller\Admin\MediaController</a></td><td class="text-right">73%</td></tr>
-       <tr><td><a href="SecurityController.php.html#10">App\Controller\Admin\SecurityController</a></td><td class="text-right">87%</td></tr>
+       <tr><td><a href="UserChecker.php.html#11">App\Security\UserChecker</a></td><td class="text-right">42%</td></tr>
 
        </tbody>
       </table>
@@ -77,8 +75,7 @@
         </tr>
        </thead>
        <tbody>
-       <tr><td><a href="MediaController.php.html#15">App\Controller\Admin\MediaController</a></td><td class="text-right">19</td></tr>
-       <tr><td><a href="SecurityController.php.html#10">App\Controller\Admin\SecurityController</a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="UserChecker.php.html#11">App\Security\UserChecker</a></td><td class="text-right">6</td></tr>
 
        </tbody>
       </table>
@@ -116,8 +113,7 @@
         </tr>
        </thead>
        <tbody>
-       <tr><td><a href="MediaController.php.html#48"><abbr title="App\Controller\Admin\MediaController::add">add</abbr></a></td><td class="text-right">41%</td></tr>
-       <tr><td><a href="SecurityController.php.html#12"><abbr title="App\Controller\Admin\SecurityController::login">login</abbr></a></td><td class="text-right">87%</td></tr>
+       <tr><td><a href="UserChecker.php.html#13"><abbr title="App\Security\UserChecker::checkPreAuth">checkPreAuth</abbr></a></td><td class="text-right">33%</td></tr>
 
        </tbody>
       </table>
@@ -134,8 +130,7 @@
         </tr>
        </thead>
        <tbody>
-       <tr><td><a href="MediaController.php.html#48"><abbr title="App\Controller\Admin\MediaController::add">add</abbr></a></td><td class="text-right">16</td></tr>
-       <tr><td><a href="SecurityController.php.html#12"><abbr title="App\Controller\Admin\SecurityController::login">login</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="UserChecker.php.html#13"><abbr title="App\Security\UserChecker::checkPreAuth">checkPreAuth</abbr></a></td><td class="text-right">5</td></tr>
 
        </tbody>
       </table>
@@ -149,9 +144,9 @@
     </p>
    </footer>
   </div>
-  <script src="../../_js/jquery.min.js?v=9.2.32" type="text/javascript"></script>
-  <script src="../../_js/d3.min.js?v=9.2.32" type="text/javascript"></script>
-  <script src="../../_js/nv.d3.min.js?v=9.2.32" type="text/javascript"></script>
+  <script src="../_js/jquery.min.js?v=9.2.32" type="text/javascript"></script>
+  <script src="../_js/d3.min.js?v=9.2.32" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js?v=9.2.32" type="text/javascript"></script>
   <script type="text/javascript">
 $(document).ready(function() {
   nv.addGraph(function() {
@@ -164,7 +159,7 @@ $(document).ready(function() {
       .yAxis.tickFormat(d3.format('d'));
 
     d3.select('#classCoverageDistribution svg')
-      .datum(getCoverageDistributionData([0,0,0,0,0,0,0,0,1,1,1,1], "Class Coverage"))
+      .datum(getCoverageDistributionData([0,0,0,0,0,1,0,0,0,0,0,0], "Class Coverage"))
       .transition().duration(500).call(chart);
 
     nv.utils.windowResize(chart.update);
@@ -182,7 +177,7 @@ $(document).ready(function() {
       .yAxis.tickFormat(d3.format('d'));
 
     d3.select('#methodCoverageDistribution svg')
-      .datum(getCoverageDistributionData([0,0,0,0,0,1,0,0,0,1,1,13], "Method Coverage"))
+      .datum(getCoverageDistributionData([0,0,0,0,1,0,0,0,0,0,0,1], "Method Coverage"))
       .transition().duration(500).call(chart);
 
     nv.utils.windowResize(chart.update);
@@ -232,7 +227,7 @@ $(document).ready(function() {
     chart.yAxis.axisLabel('Cyclomatic Complexity');
 
     d3.select('#classComplexity svg')
-      .datum(getComplexityData([[100,11,"<a href=\"AlbumController.php.html#18\">App\\Controller\\Admin\\AlbumController<\/a>"],[98.11320754716981,13,"<a href=\"GuestController.php.html#22\">App\\Controller\\Admin\\GuestController<\/a>"],[73.07692307692307,15,"<a href=\"MediaController.php.html#15\">App\\Controller\\Admin\\MediaController<\/a>"],[87.5,3,"<a href=\"SecurityController.php.html#10\">App\\Controller\\Admin\\SecurityController<\/a>"]], 'Class Complexity'))
+      .datum(getComplexityData([[42.857142857142854,4,"<a href=\"UserChecker.php.html#11\">App\\Security\\UserChecker<\/a>"]], 'Class Complexity'))
       .transition()
       .duration(500)
       .call(chart);
@@ -256,7 +251,7 @@ $(document).ready(function() {
     chart.yAxis.axisLabel('Method Complexity');
 
     d3.select('#methodComplexity svg')
-      .datum(getComplexityData([[100,1,"<a href=\"AlbumController.php.html#20\">App\\Controller\\Admin\\AlbumController::__construct<\/a>"],[100,1,"<a href=\"AlbumController.php.html#24\">App\\Controller\\Admin\\AlbumController::index<\/a>"],[100,3,"<a href=\"AlbumController.php.html#33\">App\\Controller\\Admin\\AlbumController::add<\/a>"],[100,4,"<a href=\"AlbumController.php.html#51\">App\\Controller\\Admin\\AlbumController::update<\/a>"],[100,2,"<a href=\"AlbumController.php.html#73\">App\\Controller\\Admin\\AlbumController::delete<\/a>"],[100,1,"<a href=\"GuestController.php.html#24\">App\\Controller\\Admin\\GuestController::__construct<\/a>"],[100,1,"<a href=\"GuestController.php.html#29\">App\\Controller\\Admin\\GuestController::index<\/a>"],[92.85714285714286,4,"<a href=\"GuestController.php.html#54\">App\\Controller\\Admin\\GuestController::add<\/a>"],[100,4,"<a href=\"GuestController.php.html#80\">App\\Controller\\Admin\\GuestController::block<\/a>"],[100,3,"<a href=\"GuestController.php.html#109\">App\\Controller\\Admin\\GuestController::delete<\/a>"],[100,1,"<a href=\"MediaController.php.html#17\">App\\Controller\\Admin\\MediaController::__construct<\/a>"],[100,2,"<a href=\"MediaController.php.html#21\">App\\Controller\\Admin\\MediaController::index<\/a>"],[41.66666666666667,7,"<a href=\"MediaController.php.html#48\">App\\Controller\\Admin\\MediaController::add<\/a>"],[100,5,"<a href=\"MediaController.php.html#92\">App\\Controller\\Admin\\MediaController::delete<\/a>"],[87.5,2,"<a href=\"SecurityController.php.html#12\">App\\Controller\\Admin\\SecurityController::login<\/a>"],[100,1,"<a href=\"SecurityController.php.html#35\">App\\Controller\\Admin\\SecurityController::logout<\/a>"]], 'Method Complexity'))
+      .datum(getComplexityData([[33.33333333333333,3,"<a href=\"UserChecker.php.html#13\">App\\Security\\UserChecker::checkPreAuth<\/a>"],[100,1,"<a href=\"UserChecker.php.html#26\">App\\Security\\UserChecker::checkPostAuth<\/a>"]], 'Method Complexity'))
       .transition()
       .duration(500)
       .call(chart);

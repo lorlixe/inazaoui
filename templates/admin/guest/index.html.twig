@@ -11,6 +11,7 @@
 		<thead>
 			<tr>
 				<th>Nom</th>
+				<th>Status</th>
 				<th>Actions</th>
 			</tr>
 		</thead>
@@ -20,7 +21,14 @@
 					<td>{{ guest.name }}</td>
 					<td>
 						{% if guest.blocked %}
-							<a href="{{ path('admin_guest_block', {id: guest.id}) }}" class="btn btn-primary">Débloquer</a>
+							<span class="badge bg-danger">Bloqué</span>
+						{% else %}
+							<span class="badge bg-success">Actif</span>
+						{% endif %}
+					</td>
+					<td>
+						{% if guest.blocked %}
+							<a href="{{ path('admin_guest_block', {id: guest.id}) }}" class="btn bg-success">Débloquer</a>
 						{% else %}
 							<a href="{{ path('admin_guest_block', {id: guest.id}) }}" class="btn btn-warning">Bloquer</a>
 						{% endif %}
