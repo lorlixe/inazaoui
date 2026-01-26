@@ -32,7 +32,7 @@ class MediaController extends AbstractController
 
         $medias = $this->entityManager->getRepository(Media::class)->findBy(
             $criteria,
-            ['id' => 'ASC'],
+            ['id' => 'DESC'],
             25,
             25 * ($page - 1)
         );
@@ -49,20 +49,36 @@ class MediaController extends AbstractController
     public function add(Request $request): Response
     {
         $media = new Media();
+
+        $user = $this->getUser();
+        if (!$user instanceof \App\Entity\User) {
+            throw new \LogicException('User must be logged in');
+        }
+
+        $media->setUser($user);
         $form = $this->createForm(MediaType::class, $media, [
             'is_admin' => $this->isGranted('ROLE_ADMIN')
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Si pas admin, associer le média à l'utilisateur
             if (!$this->isGranted('ROLE_ADMIN')) {
-                $media->setUser($this->getUser());
+                $media->setUser($user);
             }
 
-            // Génère un nom de fichier unique et le déplace
-            $media->setPath('uploads/' . md5(uniqid()) . '.' . $media->getFile()->guessExtension());
-            $media->getFile()->move('uploads/', $media->getPath());
+            //  Vérifier que le fichier existe
+            $file = $media->getFile();
+            if ($file === null) {
+                throw new \LogicException('File is required');
+            }
+
+            $extension = $file->guessExtension();
+            if ($extension === null) {
+                $extension = 'bin';
+            }
+
+            $media->setPath('uploads/' . md5(uniqid()) . '.' . $extension);
+            $file->move('uploads/', $media->getPath());
 
             $this->entityManager->persist($media);
             $this->entityManager->flush();
@@ -77,10 +93,15 @@ class MediaController extends AbstractController
     public function delete(int $id): Response
     {
         $media = $this->entityManager->getRepository(Media::class)->find($id);
-
         if (!$media) {
             throw $this->createNotFoundException('Media not found');
         }
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            if ($media->getUser() !== $this->getUser()) {
+                throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer un média qui ne vous appartient pas.');
+            }
+        }
+
 
         // Supprime le fichier physique
         if (file_exists($media->getPath())) {

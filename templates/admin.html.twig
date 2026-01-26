@@ -1,35 +1,51 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container-fluid">
-        <div class="row">
-            <nav class="col-md-3 col-lg-2 d-none d-md-block bg-dark sidebar min-vh-100 p-4">
-                <div class="position-sticky">
-                    <h1 class="text-white">Admin</h1>
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('admin_media_index') }}">
-                                Medias
-                            </a>
-                        </li>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ path('admin_album_index') }}">
-                                    Albums
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="">
-                                    Invités
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </nav>
-            <main class="col-md-9 ms-sm-auto col-lg-10 p-4">
-                {% block admin %}{% endblock %}
-            </main>
-        </div>
-    </div>
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="col-md-3 col-lg-2 d-none d-md-block bg-dark sidebar min-vh-100 p-4">
+				<div class="position-sticky">
+					{% if is_granted('ROLE_ADMIN') %}
+
+						<h1 class="text-white">Admin</h1>
+
+					{% else %}
+
+						<h1 class="text-white">Dashboard</h1>
+
+
+					{% endif %}
+
+					<ul class="nav flex-column">
+						<li class="nav-item">
+							<a class="nav-link" href="{{ path('admin_media_index') }}">
+								Medias
+							</a>
+						</li>
+
+						{% if is_granted('ROLE_ADMIN') %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('admin_album_index') }}">
+									Albums
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="{{path("admin_guest_index")}}">
+									Invités
+								</a>
+							</li>
+						{% endif %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ path('home') }}">
+								Accueil
+							</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+			<main class="col-md-9 ms-sm-auto col-lg-10 p-4">
+				{% block admin %}{% endblock %}
+			</main>
+		</div>
+	</div>
 {% endblock %}
