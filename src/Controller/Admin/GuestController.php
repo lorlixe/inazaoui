@@ -115,7 +115,7 @@ class GuestController extends AbstractController
         if (!$guest) {
             throw $this->createNotFoundException('User not found');
         }
-        // Empêcher l'admin de se bloquer lui-même
+        // Empêcher l'admin de se supprimer lui-même
         if ($guest === $this->getUser()) {
             $this->addFlash('error', 'Vous ne pouvez pas vous supprimer vous-même.');
             return $this->redirectToRoute('admin_guest_index');
