@@ -22,29 +22,32 @@ class MediaController extends AbstractController
     public function index(Request $request): Response
     {
         $page = $request->query->getInt('page', 1);
+        $limit = 25;
 
+        // Critères de filtrage selon le rôle
         $criteria = [];
-
-        // Si pas admin, afficher seulement ses médias
         if (!$this->isGranted('ROLE_ADMIN')) {
             $criteria['user'] = $this->getUser();
         }
 
+        // Récupération des médias paginés
         $medias = $this->entityManager->getRepository(Media::class)->findBy(
             $criteria,
             ['id' => 'DESC'],
-            25,
-            25 * ($page - 1)
+            $limit,
+            $limit * ($page - 1)
         );
-        $total = $this->entityManager->getRepository(Media::class)->count([]);
+
+        // Count avec les mêmes critères pour une pagination correcte
+        $total = $this->entityManager->getRepository(Media::class)->count($criteria);
 
         return $this->render('admin/media/index.html.twig', [
             'medias' => $medias,
             'total' => $total,
-            'page' => $page
+            'page' => $page,
+            'limit' => $limit,
         ]);
     }
-
     #[Route('/admin/media/add', name: 'admin_media_add')]
     public function add(Request $request): Response
     {
