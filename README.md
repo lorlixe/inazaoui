@@ -4,7 +4,7 @@
 
 Ce site web appartient à une photographe spécialisée dans les photos de paysages du monde entier. Il a été mis à jour et de nouvelles fonctionnalités ont été ajoutées.
 
-## Dépendances
+## Pré-requis
 
 - PHP 8.2 ou supérieur
 - Composer
@@ -18,7 +18,7 @@ Ce site web appartient à une photographe spécialisée dans les photos de paysa
 3. Créer un fichier `.env.local` et ajouter l'URL de la base de données :
 
 ```
-   DATABASE_URL="mysql://root:password@127.0.0.1:3306/critipixel_dev"
+   DATABASE_URL="mysql://root:password@127.0.0.1:3306/inazaoui_dev"
 ```
 
 ## Initialisation de la base de données

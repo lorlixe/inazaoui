@@ -6,10 +6,11 @@
 		<a href="{{ path('admin_media_index') }}" class="btn btn-primary">Retour</a>
 	</div>
 	{{ form_start(form) }}
+	<button type="submit" class="btn btn-primary">Ajouter</button>
+
 	{% if is_granted('ROLE_ADMIN') %}
 		{{ form_row(form.album) }}
 		{{ form_row(form.title) }}
 	{% endif %}
-	<button type="submit" class="btn btn-primary">Ajouter</button>
 	{{ form_end(form) }}
 {% endblock %}
