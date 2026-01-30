@@ -84,11 +84,8 @@ jobs:
           php bin/console doctrine:fixtures:load --no-interaction --env=test
           php bin/console cache:clear --env=test
 
-      - name: Run Unit Tests
-        run: php bin/phpunit tests/Unit --testdox
-
       - name: Run Tests with Coverage
-        run: php bin/phpunit tests/Unit --coverage-text --coverage-clover=coverage.xml
+        run: php bin/phpunit --coverage-text --coverage-clover=coverage.xml
 
       - name: Static Analysis (PHPStan)
         run: php vendor/bin/phpstan analyse src tests --level=6
